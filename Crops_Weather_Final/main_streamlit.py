@@ -24,7 +24,7 @@ from plants_treatments_database import Fertilizer_result
 st.set_page_config(page_title="Planting and Weather", page_icon=":herb:", layout="wide")
 
 ###Refresh every 60 Minutes
-st_autorefresh(interval=10 * 60 * 1000, key="dataframerefresh")
+st_autorefresh(interval=60 * 60 * 1000, key="dataframerefresh")
 
 ###Section for tracking fertilizer and other applications in the garden
 with st.empty():
