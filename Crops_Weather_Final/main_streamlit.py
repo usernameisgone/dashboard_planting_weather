@@ -22,6 +22,22 @@ from plants_treatments_database import Fertilizer_result
 
 ###Browser Tab Properties
 st.set_page_config(page_title="Planting and Weather", page_icon=":herb:", layout="wide")
+st.markdown("""
+        <style>
+               .css-18e3th9 {
+                    padding-top: 0rem;
+                    padding-bottom: 10rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+               .css-1d391kg {
+                    padding-top: 3.5rem;
+                    padding-right: 1rem;
+                    padding-bottom: 3.5rem;
+                    padding-left: 1rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
 
 ###Refresh every 60 Minutes
 st_autorefresh(interval=60 * 60 * 1000, key="dataframerefresh")
