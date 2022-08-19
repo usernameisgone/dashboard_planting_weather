@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Crops_Weather_Final"
   ],
+  "SelectedNode": "\\Crops_Weather_Final\\main_streamlit.py",
   "PreviewInSolutionExplorer": false
 }

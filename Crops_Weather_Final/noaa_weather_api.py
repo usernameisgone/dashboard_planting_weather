@@ -1,5 +1,4 @@
 from ast import Return
-from this import s
 from time import sleep
 from turtle import color
 import requests
