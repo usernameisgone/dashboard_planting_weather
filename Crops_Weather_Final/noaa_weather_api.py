@@ -3,15 +3,17 @@ from time import sleep
 from turtle import color
 import requests
 import pandas as pd
+import geocoder
 
 def weather_data_pandas_frame():
-
-### Get Geographic Coordinates from text file
-    geofile = open("geocoordinates.txt")
-    geocoordinates = geofile.read()
-
+    geo = geocoder.ip('me')
+    gll = geo.latlng
+    lat = str(gll[0])
+    lon = str(gll[1])
+    latlon = lat + "," + lon
+   
 ### Retrieve forecast API URLs for grid location from NOAA
-    noaa_find_grid_URL = "https://api.weather.gov/points/" + geocoordinates
+    noaa_find_grid_URL = "https://api.weather.gov/points/" + latlon
 
     noaapoints = requests.get(noaa_find_grid_URL)
 
