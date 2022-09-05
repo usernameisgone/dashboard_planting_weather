@@ -2,13 +2,6 @@
 Dashboard for Planting and Weather
 Overview:
 
-Before startup, update the geocoordinates.txt file to your geocoordinates in the same format as the file.
-How to get geocoordinates from gooogle:
-Get the coordinates of a place
-On your computer, open Google Maps.
-Right-click the place or area on the map. This will open a pop-up window. You can find your latitude and longitude in decimal format at the top.
-To copy the coordinates automatically, left click on the latitude and longitude.
-
 You will need to have Python and PIP installed to run the program.
 Required packages are located in requirements.txt, but the key items are the below:
 
@@ -17,6 +10,7 @@ streamlit-autorefresh
 pandas
 requests
 Pillow
+geocoder
 
 Planting Database:
 The planting schedules are based on the southeast US - you may need to update the data set prior to creating the database.
