@@ -1,5 +1,3 @@
-
-from email.header import decode_header
 from os import curdir
 import sqlite3
 from sqlite3.dbapi2 import Cursor
@@ -84,44 +82,49 @@ def TryConnect():
 
 
 def CreateTableValidation():
-    c = connection.cursor()
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Crops_Fin
                 (Crop TEXT, PlantingStart DATE, PlantingEnd DATE, Seed TEXT, Spacing TEXT, PlantingDepth TEXT, DaystoHarvest TEXT )''')
-    connection.commit()
+    conn.commit()
     c.close()
     return "Table Validated"
 
 def CreateTableValidation_Neem_Oil():
-    c = connection.cursor()
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Neem_Oil
                 (ApplicationDate DATE)''')
-    connection.commit()
+    conn.commit()
     c.close()
     return "Table Validated"
 
 def CreateTableValidation_Epsom_Salt():
-    c = connection.cursor()
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Epsom_Salt
                 (ApplicationDate DATE)''')
-    connection.commit()
+    conn.commit()
     c.close()
     return "Table Validated"
 
 def CreateTableValidation_Fertilizer():
-    c = connection.cursor()
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Fertilizer
                 (ApplicationDate DATE)''')
-    connection.commit()
+    conn.commit()
     c.close()
     return "Table Validated"
 
 def PopCropTableIfEmpty():
-    c = connection.cursor()
-    target_actual_search = c.execute('''select Crop from Crops_Fin''')
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
+    target_actual_search = c.execute('''Select Crop from Crops_Fin''')
     target_actual= len(c.fetchall())
     if target_actual < 1:
         c.executemany("insert into Crops_Fin values (?,?,?,?,?,?,?)", crops_list)
-        connection.commit()
+        conn.commit()
         c.close()
         return "Table Populated"
     else:
@@ -141,7 +144,8 @@ def add_years(start_date, years):
 
 
 def planting_date_updates():
-    c = connection.cursor()
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
     update_search = c.execute('''select Crop, PlantingStart, PlantingEnd from Crops_Fin WHERE PlantingEnd < datetime('now', 'localtime')''')
     fetch_update_rows = c.fetchall()
     for row in fetch_update_rows:
@@ -154,19 +158,21 @@ def planting_date_updates():
         date_object2 = datetime.strptime(plantdate2, '%Y-%m-%d').date()
         updated_date2 = add_years(date_object2, 1)
         c.execute(''' UPDATE Crops_Fin SET PlantingStart = ?, PlantingEnd = ? WHERE Crop = ?''', (updated_date1, updated_date2, plant))
-        connection.commit()
+        conn.commit()
         c.close()
     return "Planting Dates Updated"
 
 def plant_now():
-    c = connection.cursor()
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
     for row in c.execute("select * from Crops_Fin where datetime('now', 'localtime') BETWEEN PlantingStart and PlantingEnd"):
         print(row)
     c.close()
 
 def full_crop_table():
-    c = connection.cursor()
-    for row in Cursor.execute("select * from Crops_fin"):
+    conn = sqlite3.connect(file, check_same_thread=False)
+    c = conn.cursor()
+    for row in c.execute("select * from Crops_fin"):
         print(row)
     c.close()
 
@@ -291,16 +297,16 @@ def crops_stream_SQL_Output():
     data = c.fetchall()
     c.close()
     return data
-
 """
 ### DEBUG Functions ####
 print(TryConnect())
 print(CreateTableValidation())
-target_actual_search = Cursor.execute('''select Crop from Crops_Fin''')
-target_actual= len(Cursor.fetchall())
+y = connection.cursor()
+target_actual_search = y.execute('''SELECT Crop from Crops_Fin''')
+target_actual= len(y.fetchall())
 print(PopCropTableIfEmpty())
-update_search = Cursor.execute('''select Crop, PlantingStart, PlantingEnd from Crops_Fin WHERE PlantingEnd < datetime('now', 'localtime')''')
-fetch_update_rows = Cursor.fetchall()
+update_search = y.execute('''select Crop, PlantingStart, PlantingEnd from Crops_Fin WHERE PlantingEnd < datetime('now', 'localtime')''')
+fetch_update_rows = y.fetchall()
 print(planting_date_updates())
 print("***********************************************")
 print("What to plant now \n\n")
