@@ -20,6 +20,8 @@ from plants_treatments_database import Neem_Oil_result
 from plants_treatments_database import Epsom_Salt_result
 from plants_treatments_database import Fertilizer_result
 
+plant_db_spin_up()
+
 ###Browser Tab Properties
 st.set_page_config(page_title="Planting and Weather", page_icon=":herb:", layout="wide")
 st.markdown("""
