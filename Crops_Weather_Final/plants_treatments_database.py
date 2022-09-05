@@ -159,7 +159,7 @@ def planting_date_updates():
         updated_date2 = add_years(date_object2, 1)
         c.execute(''' UPDATE Crops_Fin SET PlantingStart = ?, PlantingEnd = ? WHERE Crop = ?''', (updated_date1, updated_date2, plant))
         conn.commit()
-        c.close()
+    c.close()
     return "Planting Dates Updated"
 
 def plant_now():
