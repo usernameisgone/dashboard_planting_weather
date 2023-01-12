@@ -1,9 +1,7 @@
-from os import curdir
 import sqlite3
 from sqlite3.dbapi2 import Cursor
 import datetime
 from datetime import datetime, date
-import pandas as pd
 
 ### Setting the Database Variables
 file = "Planting.db"
@@ -73,15 +71,15 @@ crops_list = [('Asparagus', '2022-03-01', '2022-04-15', '--', '36 x 18', '4 crow
 
 
 ### Function Definitions for Database Maintenance
-def TryConnect():
+def tryconnect():
     try:
         conn = sqlite3.connect(file, check_same_thread=False)
         return "Sucessful Connection"
     except:
-       return "Failed Connection"
+        return "Failed Connection"
 
 
-def CreateTableValidation():
+def create_table_validation():
     conn = sqlite3.connect(file, check_same_thread=False)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Crops_Fin
@@ -90,7 +88,7 @@ def CreateTableValidation():
     c.close()
     return "Table Validated"
 
-def CreateTableValidation_Neem_Oil():
+def create_table_validation_neem_oil():
     conn = sqlite3.connect(file, check_same_thread=False)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Neem_Oil
@@ -99,7 +97,7 @@ def CreateTableValidation_Neem_Oil():
     c.close()
     return "Table Validated"
 
-def CreateTableValidation_Epsom_Salt():
+def create_table_validation_epsom_salt():
     conn = sqlite3.connect(file, check_same_thread=False)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Epsom_Salt
@@ -108,7 +106,7 @@ def CreateTableValidation_Epsom_Salt():
     c.close()
     return "Table Validated"
 
-def CreateTableValidation_Fertilizer():
+def create_table_validation_fertilizer():
     conn = sqlite3.connect(file, check_same_thread=False)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS Fertilizer
@@ -117,10 +115,10 @@ def CreateTableValidation_Fertilizer():
     c.close()
     return "Table Validated"
 
-def PopCropTableIfEmpty():
+def pop_crop_table_if_empty():
     conn = sqlite3.connect(file, check_same_thread=False)
     c = conn.cursor()
-    target_actual_search = c.execute('''Select Crop from Crops_Fin''')
+    c.execute('''Select Crop from Crops_Fin''')
     target_actual= len(c.fetchall())
     if target_actual < 1:
         c.executemany("insert into Crops_Fin values (?,?,?,?,?,?,?)", crops_list)
@@ -146,10 +144,9 @@ def add_years(start_date, years):
 def planting_date_updates():
     conn = sqlite3.connect(file, check_same_thread=False)
     c = conn.cursor()
-    update_search = c.execute('''select Crop, PlantingStart, PlantingEnd from Crops_Fin WHERE PlantingEnd < datetime('now', 'localtime')''')
+    c.execute('''select Crop, PlantingStart, PlantingEnd from Crops_Fin WHERE PlantingEnd < datetime('now', 'localtime')''')
     fetch_update_rows = c.fetchall()
     for row in fetch_update_rows:
-        string1 = convertTuple(row)
         plant = row[0]
         plantdate1 = row[1]
         plantdate2 = row[2]
@@ -179,141 +176,121 @@ def full_crop_table():
 
 ### Main Function to call the above subfunctions to validate the database and Update the plating dates
 def plant_db_spin_up():
-    TryConnect()
-    CreateTableValidation()
-    CreateTableValidation_Neem_Oil()
-    CreateTableValidation_Epsom_Salt()
-    CreateTableValidation_Fertilizer()
-    PopCropTableIfEmpty()
+    tryconnect()
+    create_table_validation()
+    create_table_validation_neem_oil()
+    create_table_validation_epsom_salt()
+    create_table_validation_fertilizer()
+    pop_crop_table_if_empty()
     planting_date_updates()
 
 ### Define Function for update_planting_db.py to be scheduled in CHRON/Task Scheduler
 def plant_Update_process():
-    print(TryConnect())
+    print(tryconnect())
     print(planting_date_updates())
 
 ### Define Functons for Streamlit Calls
-def Neem_Oil_Insert():
+def neem_oil_insert():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Neem_Oil()
+    tryconnect()
+    create_table_validation_neem_oil()
     c.execute('''INSERT INTO Neem_Oil VALUES (date(datetime('now', 'localtime')))''')
     connection.commit()
     c.close()
 
-def Neem_Oil_Update():
+def neem_oil_update():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Neem_Oil()
-    neem_oil_all = c.execute('''Select * from Neem_Oil''')
+    tryconnect()
+    create_table_validation_neem_oil()
+    c.execute('''Select * from Neem_Oil''')
     count_neem_oil_all = len(c.fetchall())
     if count_neem_oil_all > 1:
         c.execute("DELETE from Neem_Oil where ApplicationDate = (select min(ApplicationDate) from Neem_Oil)")
         connection.commit()
         c.close()
 
-def Neem_Oil_Update_button():
-    Neem_Oil_Insert()
-    Neem_Oil_Update()
+def neem_oil_update_button():
+    neem_oil_insert()
+    neem_oil_update()
 
-def Neem_Oil_result():
+def neem_oil_result():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Neem_Oil()
-    neem_oil_query = c.execute("Select max(ApplicationDate) from Neem_Oil")
+    tryconnect()
+    create_table_validation_neem_oil()
+    c.execute("Select max(ApplicationDate) from Neem_Oil")
     neem_data = c.fetchall()
     c.close()
     return neem_data
 
-def Epsom_Insert():
+def epsom_insert():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Epsom_Salt()
+    tryconnect()
+    create_table_validation_epsom_salt()
     c.execute('''INSERT INTO Epsom_Salt VALUES (date(datetime('now', 'localtime')))''')
     connection.commit()
     c.close()
 
-def Epsom_Update():
+def epsom_update():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Epsom_Salt()
-    epsom_salt_all = c.execute('''Select * from Epsom_Salt''')
+    tryconnect()
+    create_table_validation_epsom_salt()
+    c.execute('''Select * from Epsom_Salt''')
     count_epsom_salt_all = len(c.fetchall())
     if count_epsom_salt_all > 1:
         c.execute("DELETE from Epsom_Salt where ApplicationDate = (select min(ApplicationDate) from Epsom_salt)")
         connection.commit()
         c.close()
 
-def Epsom_Update_button():
-    Epsom_Insert()
-    Epsom_Update()
+def epsom_update_button():
+    epsom_insert()
+    epsom_update()
 
-def Epsom_Salt_result():
+def epsom_salt_result():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Epsom_Salt()
-    epsom_salt_query = c.execute("Select max(ApplicationDate) from Epsom_Salt")
+    tryconnect()
+    create_table_validation_epsom_salt()
+    c.execute("Select max(ApplicationDate) from Epsom_Salt")
     epsom_data = c.fetchall()
     c.close()
     return epsom_data
         
-def Fertilizer_Insert():
+def fertilizer_insert():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Fertilizer()
+    tryconnect()
+    create_table_validation_fertilizer()
     c.execute('''INSERT INTO Fertilizer VALUES (date(datetime('now', 'localtime')))''')
     connection.commit()
     c.close()
 
-def Fertilizer_Update():
+def fertilizer_update():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Fertilizer()
-    fertilizer_all = c.execute('''Select * from Fertilizer''')
+    tryconnect()
+    create_table_validation_fertilizer()
+    c.execute('''Select * from Fertilizer''')
     count_fertilizer_all = len(c.fetchall())
     if count_fertilizer_all > 1:
         c.execute("DELETE from Fertilizer where ApplicationDate = (select min(ApplicationDate) from Fertilizer)")
         connection.commit()
         c.close()
 
-def Fertilizer_Update_button():
-    Fertilizer_Insert()
-    Fertilizer_Update()
+def fertilizer_update_button():
+    fertilizer_insert()
+    fertilizer_update()
 
-def Fertilizer_result():
+def fertilizer_result():
     c = connection.cursor()
-    TryConnect()
-    CreateTableValidation_Fertilizer()
-    fertilizer_query = c.execute("Select max(ApplicationDate) from Fertilizer")
+    tryconnect()
+    create_table_validation_fertilizer()
+    c.execute("Select max(ApplicationDate) from Fertilizer")
     fertilizer_data = c.fetchall()
     c.close()
     return fertilizer_data
 
-def crops_stream_SQL_Output():
+def crops_stream_SQL_output():
     c = connection.cursor()
-    TryConnect()
+    tryconnect()
     plant_db_spin_up()
     c.execute("select Crop, PlantingStart, PlantingEnd  from Crops_Fin where datetime('now', 'localtime') BETWEEN PlantingStart and PlantingEnd")
     data = c.fetchall()
     c.close()
     return data
-"""
-### DEBUG Functions ####
-print(TryConnect())
-print(CreateTableValidation())
-y = connection.cursor()
-target_actual_search = y.execute('''SELECT Crop from Crops_Fin''')
-target_actual= len(y.fetchall())
-print(PopCropTableIfEmpty())
-update_search = y.execute('''select Crop, PlantingStart, PlantingEnd from Crops_Fin WHERE PlantingEnd < datetime('now', 'localtime')''')
-fetch_update_rows = y.fetchall()
-print(planting_date_updates())
-print("***********************************************")
-print("What to plant now \n\n")
-print(plant_now())
-print("***********************************************")
-print(full_crop_table())
-
-
-print(plant_now())
-"""

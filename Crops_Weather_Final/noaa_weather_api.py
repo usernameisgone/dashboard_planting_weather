@@ -1,6 +1,4 @@
-from ast import Return
 from time import sleep
-from turtle import color
 import requests
 import pandas as pd
 import geocoder
@@ -23,12 +21,12 @@ def weather_data_pandas_frame():
     noaa_forecast_grid_URL = noaapoints_json['properties']['forecastGridData']
 
 ### Set Variables for JSON data return
-    weatherforecast = requests.get(noaa_forecast_URL)
+    ##weatherforecast = requests.get(noaa_forecast_URL)
     hourlyforecast = requests.get(noaa_hourly_URL)
-    forecastgrid = requests.get(noaa_forecast_grid_URL)
-    weatherforecast_json = weatherforecast.json()
+    ##forecastgrid = requests.get(noaa_forecast_grid_URL)
+    ##weatherforecast_json = weatherforecast.json()
     hourlyforecast_json = hourlyforecast.json()
-    forecastgrid_json = forecastgrid.json()
+    ##forecastgrid_json = forecastgrid.json()
 
 ### Create dataframe with formatted results for display
     df_weather_init = pd.DataFrame(hourlyforecast_json['properties']['periods'])
@@ -50,3 +48,17 @@ def get_noaa_weather():
         return weather_data_pandas_frame()
     finally:
         return weather_data_pandas_frame()
+
+def forecast_image():
+    curr_forecast_df = get_noaa_weather()
+    forecast_text = str(curr_forecast_df.iloc[0, 2])
+    lower_forecast_text = str.lower(forecast_text)
+    rain_image = 'weather_frog_rain.png'
+    normal_image = 'weather_frog_normal.png'
+    if ("rain" in lower_forecast_text) or ("storm" in lower_forecast_text):
+        return rain_image
+    else: 
+        return normal_image
+
+print (weather_data_pandas_frame().values.tolist())
+print(weather_data_pandas_frame().columns.tolist())
